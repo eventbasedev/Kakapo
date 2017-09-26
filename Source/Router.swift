@@ -99,6 +99,8 @@ public final class Router {
         let path: String
         let method: HTTPMethod
         
+        var requestIndex = 0
+        
         static func == (lhs: Router.Route, rhs: Router.Route) -> Bool {
             return lhs.path == rhs.path && lhs.method == rhs.method
         }
@@ -121,7 +123,7 @@ public final class Router {
         case patch = "PATCH"
     }
     
-    private var routes: [Route : RouteHandler] = [:]
+    private var routes: [Route : [RouteHandler]] = [:]
 
     /// The `baseURL` of the Router
     public let baseURL: String
@@ -206,7 +208,11 @@ public final class Router {
                 let dataBody = server.request.httpBody ?? URLProtocol.property(forKey: "kkp_requestHTTPBody", in: server.request) as? Data
 
                 let request = Request(components: info.components, queryParameters: info.queryParameters, httpBody: dataBody, httpHeaders: server.request.allHTTPHeaderFields)
-                serializableObject = handler(request)
+                serializableObject = handler[key.requestIndex](request)
+                key.requestIndex += 1
+                if(key.requestIndex >= handler.count) {
+                    key.requestIndex = 0
+                }
                 break
             }
         }
@@ -234,7 +240,10 @@ public final class Router {
     }
     
     private func addRoute(with path: String, method: HTTPMethod, handler: @escaping RouteHandler) {
-        routes[Route(path: path, method: method)] = handler
+        if (routes[Route(path: path, method: method)] == nil) {
+            routes[Route(path: path, method: method)] = []
+        }
+        routes[Route(path: path, method: method)]?.append(handler)
     }
 
     /**
