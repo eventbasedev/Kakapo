@@ -21,7 +21,7 @@ line_length: 500 # goal: 110
 
 type_body_length:
   warning: 300
-  error: 400
+  error: 800
 
 file_length:
   warning: 500
@@ -39,7 +39,7 @@ type_name:
 
 variable_name:
   min_length: # only min_length
-    error: 4 # only error
+    error: 3 # only error
   excluded: # excluded via string array
     - id
     - URL
