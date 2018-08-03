@@ -100,8 +100,8 @@ private extension String {
         let startIndex = charactersView.startIndex
         let endIndex = charactersView.count - 1
         
-        for (idx, c) in charactersView.reversed().enumerated() {
-            let char = String(c)
+        for (idx, character) in charactersView.reversed().enumerated() {
+            let char = String(character)
             let lowerCased = char.lowercased()
             let isUppercase = char != lowerCased
             

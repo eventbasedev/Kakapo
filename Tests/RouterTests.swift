@@ -73,8 +73,8 @@ class RouterTests: QuickSpec {
             }
 
             it("should not confuse multiple request with identical URL") {
-                var response_A: Any? = nil
-                var responseError_B: Error? = nil
+                var responseA: Any? = nil
+                var responseErrorB: Error? = nil
                 let canceledRequestID = "999"
 
                 router.get("/cash/:id") { request in
@@ -85,26 +85,26 @@ class RouterTests: QuickSpec {
                     return ["foo": "bar"]
                 }
 
-                let requestURL_A = URL(string: "\(baseURL)/cash/333")!
-                let requestURL_B = URL(string: "\(baseURL)/cash/\(canceledRequestID)")!
+                let requestURLA = URL(string: "\(baseURL)/cash/333")!
+                let requestURLB = URL(string: "\(baseURL)/cash/\(canceledRequestID)")!
 
-                let dataTask_A = URLSession.shared.dataTask(with: requestURL_A) { (_, response, _) in
-                    response_A = response
+                let dataTaskA = URLSession.shared.dataTask(with: requestURLA) { (_, response, _) in
+                    responseA = response
                 }
-                let dataTask_B = URLSession.shared.dataTask(with: requestURL_B) { (_, _, error) in
-                    responseError_B = error
+                let dataTaskB = URLSession.shared.dataTask(with: requestURLB) { (_, _, error) in
+                    responseErrorB = error
                 }
 
-                dataTask_A.resume()
-                dataTask_B.resume()
-                dataTask_B.cancel() // cancel immediately -> should never get executed, because of Router.latency
+                dataTaskA.resume()
+                dataTaskB.resume()
+                dataTaskB.cancel() // cancel immediately -> should never get executed, because of Router.latency
 
                 // expect task A to succeed
-                expect(response_A).toNotEventually(beNil(), timeout: (latency + 1))
+                expect(responseA).toNotEventually(beNil(), timeout: (latency + 1))
 
                 // expect task B to get cancelled
-                expect(responseError_B).toNotEventually(beNil(), timeout: (latency + 1))
-                expect(responseError_B?.localizedDescription).toEventually(equal("cancelled"), timeout: (latency + 1))
+                expect(responseErrorB).toNotEventually(beNil(), timeout: (latency + 1))
+                expect(responseErrorB?.localizedDescription).toEventually(equal("cancelled"), timeout: (latency + 1))
             }
 
             it("should send notifications when loading has finished") {
