@@ -106,7 +106,7 @@ public final class Store {
         let objects = ids.map { id in T(id: id, store: self) }
         
         barrierAsync {
-            self.lookup(T.self).value.append(contentsOf: objects.flatMap { $0 as Storable })
+            self.lookup(T.self).value.append(contentsOf: objects.compactMap { $0 as Storable })
         }
         
         return objects
@@ -187,7 +187,7 @@ public final class Store {
      */
     public func findAll<T: Storable>(_: T.Type) -> [T] {
         return sync {
-            self.lookup(T.self).value.flatMap {$0 as? T}
+            self.lookup(T.self).value.compactMap {$0 as? T}
         }
     }
     

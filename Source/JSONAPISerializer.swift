@@ -156,13 +156,13 @@ extension Array: JSONAPISerializable {
     
     /// return the result of recursively forwarding the function to its elements if the associatedtype is JSONAPISerializable, otherwise returns nil
     public func data(includingRelationships: Bool, includingAttributes: Bool, transformingKeys keyTransformer: KeyTransformer?) -> Any? {
-        return Element.self is JSONAPISerializable.Type ? flatMap { ($0 as? JSONAPISerializable)?.data(includingRelationships: includingRelationships, includingAttributes: includingAttributes, transformingKeys: keyTransformer) } : nil
+        return Element.self is JSONAPISerializable.Type ? compactMap { ($0 as? JSONAPISerializable)?.data(includingRelationships: includingRelationships, includingAttributes: includingAttributes, transformingKeys: keyTransformer) } : nil
     }
     
     /// return the result of recursively forwarding the function to its elements if the associatedtype is JSONAPISerializable, otherwise returns nil
     public func includedRelationships(includingChildren: Bool, transformingKeys keyTransformer: KeyTransformer?) -> [Any]? {
         guard Element.self is JSONAPISerializable.Type else { return nil }
-        let includedRelationships = flatMap { ($0 as? JSONAPISerializable)?.includedRelationships(includingChildren: includingChildren, transformingKeys: keyTransformer) }.flatMap { $0 }
+        let includedRelationships = compactMap { ($0 as? JSONAPISerializable)?.includedRelationships(includingChildren: includingChildren, transformingKeys: keyTransformer) }.flatMap { $0 }
         return includedRelationships.isEmpty ? nil : includedRelationships
     }
     

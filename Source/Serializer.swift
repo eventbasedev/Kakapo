@@ -94,7 +94,7 @@ public extension Serializable {
 extension Array: CustomSerializable {
     /// `Array` is serialized by returning an `Array` containing its serialized elements
     public func customSerialized(transformingKeys keyTransformer: KeyTransformer?) -> Any? {
-        return flatMap { (element) -> Any? in
+        return compactMap { (element) -> Any? in
             return serializeObject(element, keyTransformer: keyTransformer)
         }
     }
